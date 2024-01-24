@@ -1,0 +1,6 @@
+{
+  "MYSQL_HOSTNAME": "mysql.seuservidor.com",
+  "MYSQL_USERNAME": "seuusuario",
+  "MYSQL_PASSWORD": "suasenha",
+  "MYSQL_DATABASE": "seubancodedados"
+}
