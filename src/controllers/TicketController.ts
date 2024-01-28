@@ -49,6 +49,10 @@ class TicketController {
         return Array.from(this.cache.values()).find(ticket => ticket.sector_id === sector_id);
     }
 
+    getTicketByThread(thread_id: string) {
+        return Array.from(this.cache.values()).find(ticket => ticket.thread_id === thread_id);
+    }
+
     getTicketByUser(user_id: string) {
         return Array.from(this.cache.values()).find(ticket => ticket.user_id === user_id);
     }
