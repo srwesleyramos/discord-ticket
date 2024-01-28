@@ -20,9 +20,9 @@ class DatabaseService {
             CREATE TABLE IF NOT EXISTS tickets
             (
                 id        VARCHAR(36) NOT NULL,
-                sector_id   VARCHAR(18)  NOT NULL,
-                thread_id VARCHAR(18)  NOT NULL,
-                user_id   VARCHAR(18)  NOT NULL,
+                sector_id VARCHAR(36) NOT NULL,
+                thread_id VARCHAR(36) NOT NULL,
+                user_id   VARCHAR(36) NOT NULL,
                 PRIMARY KEY (id)
             );
         `);
