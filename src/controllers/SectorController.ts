@@ -13,7 +13,7 @@ class SectorController {
         console.log('[Simple Ticket] [Sector] [INFO]: o controlador de setores foi inicializado.');
 
         for (const sector of Sectors) {
-            await this.create(new Sector(sector.id, sector.label));
+            this.cache.set(sector.id, new Sector(sector.id, sector.label));
         }
 
         console.log('[Simple Ticket] [Sector] [INFO]: os setores foram carregados com êxito.');
