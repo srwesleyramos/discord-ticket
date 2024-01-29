@@ -27,11 +27,11 @@ class SectorController {
         this.cache.delete(category.id);
     }
 
-    getCategoryById(id: string) {
+    getSectorById(id: string) {
         return Array.from(this.cache.values()).find(category => category.id === id);
     }
 
-    getCategoryByLabel(label: string) {
+    getSectorByLabel(label: string) {
         return Array.from(this.cache.values()).find(category => category.label === label);
     }
 }
