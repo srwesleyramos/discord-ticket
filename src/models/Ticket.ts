@@ -7,6 +7,7 @@ import {
     ChannelManager,
     ChannelType,
     EmbedBuilder,
+    PrivateThreadChannel,
     TextChannel
 } from "discord.js";
 
@@ -34,10 +35,27 @@ export default class Ticket {
             type: ChannelType.PrivateThread
         });
 
+        await thread.members.add(this.user_id);
+
         this.sector_id = sector.id;
         this.thread_id = thread.id;
 
         await this.welcomeMessage(sector, thread.client.channels);
+        await this.addSectorMembers(sector, thread.client.channels);
+    }
+
+    async addSectorMembers(sector: Sector, channels: ChannelManager) {
+        if (!this.sector_id || !this.thread_id) return;
+
+        const generic = await channels.fetch(this.thread_id, {cache: true});
+        const channel = generic as PrivateThreadChannel;
+        const members = await sector.get(channel.guild);
+
+        for (const member of Array.from(members.values())) {
+            if (member.id !== this.user_id) {
+                await channel.members.add(member);
+            }
+        }
     }
 
     async welcomeMessage(sector: Sector, channels: ChannelManager) {
