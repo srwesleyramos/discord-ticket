@@ -44,6 +44,14 @@ class App {
             this.registerEvents();
             this.registerHandler();
 
+            process.on('unhandledRejection', async (reason) => {
+                console.error(reason); // adicionando durante fase de testes.
+            })
+
+            process.on('uncaughtException', async (reason) => {
+                console.error(reason); // adicionando durante fase de testes.
+            })
+
             console.log('[Simple Ticket] [App] [INFO]: a aplicação estabeleceu conexão com o Discord.');
         });
     }
