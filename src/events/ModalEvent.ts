@@ -13,30 +13,51 @@ export default class ModalEvent extends Listener {
     }
 
     async execute(interaction: Interaction) {
-        if (!(interaction instanceof ModalSubmitInteraction) || !interaction.customId.startsWith('create-ticket')) {
+        if (!(interaction instanceof ModalSubmitInteraction)) {
             return;
         }
 
-        const sector = Sectors.getSectorById(interaction.customId.substring(14));
+        if (interaction.customId.startsWith('create-ticket')) {
+            const sector = Sectors.getSectorById(interaction.customId.substring(14));
 
-        if (!sector) {
-            return;
+            if (!sector) {
+                return;
+            }
+
+            await interaction.reply({
+                content: 'Aguarde...',
+                ephemeral: true
+            })
+
+            const ticket = new Ticket(null, interaction.user.id);
+
+            await ticket.open(sector, interaction.channel as TextChannel, interaction.fields.getTextInputValue('reason'));
+
+            await interaction.followUp({
+                content: `O seu atendimento foi criado, use o canal: <#${ticket.thread_id}>`,
+                ephemeral: true
+            });
+
+            await Tickets.create(ticket);
         }
 
-        await interaction.reply({
-            content: 'Aguarde...',
-            ephemeral: true
-        })
+        if (interaction.customId === 'close-ticket') {
+            if (!interaction.channelId) {
+                return;
+            }
 
-        const ticket = new Ticket(null, interaction.user.id);
+            const ticket = Tickets.getTicketByThread(interaction.channelId);
 
-        await ticket.open(sector, interaction.channel as TextChannel, interaction.fields.getTextInputValue('reason'));
+            if (!ticket) {
+                return;
+            }
 
-        await interaction.followUp({
-            content: `O seu atendimento foi criado, use o canal: <#${ticket.thread_id}>`,
-            ephemeral: true
-        });
+            await interaction.reply({
+                content: 'O atendimento foi encerrado com sucesso.',
+                ephemeral: true
+            });
 
-        await Tickets.create(ticket);
+            await ticket.close(interaction.client.channels, interaction.fields.getTextInputValue('reason'));
+        }
     }
 }

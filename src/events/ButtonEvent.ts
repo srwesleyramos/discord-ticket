@@ -7,8 +7,11 @@ import {
     ButtonInteraction,
     Client,
     Interaction,
+    ModalBuilder,
     StringSelectMenuBuilder,
-    StringSelectMenuOptionBuilder
+    StringSelectMenuOptionBuilder,
+    TextInputBuilder,
+    TextInputStyle
 } from "discord.js";
 
 export default class ButtonEvent extends Listener {
@@ -46,18 +49,22 @@ export default class ButtonEvent extends Listener {
         }
 
         if (interaction.customId === 'close-ticket') {
-            const ticket = Tickets.getTicketByThread(interaction.channelId);
+            const modal = new ModalBuilder()
+                .setCustomId(`close-ticket`)
+                .setTitle('Encerrar atendimento')
+                .addComponents(
+                    new ActionRowBuilder<TextInputBuilder>()
+                        .addComponents(
+                            new TextInputBuilder()
+                                .setCustomId('reason')
+                                .setLabel("Qual o resultado do atendimento?")
+                                .setStyle(TextInputStyle.Short)
+                                .setMinLength(8)
+                                .setMaxLength(64) as any
+                        ) as any
+                );
 
-            if (!ticket) {
-                return;
-            }
-
-            await interaction.reply({
-                content: 'O atendimento foi encerrado com sucesso.',
-                ephemeral: true
-            });
-
-            await ticket.close(interaction.client.channels, 'Atendimento finalizado com sucesso.');
+            await interaction.showModal(modal);
         }
     }
 }
