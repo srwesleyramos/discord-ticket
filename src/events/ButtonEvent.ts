@@ -48,6 +48,36 @@ export default class ButtonEvent extends Listener {
             });
         }
 
+        if (interaction.customId === 'change-sector') {
+            const ticket = Tickets.getTicketByThread(interaction.channelId);
+
+            if (!ticket) {
+                return;
+            }
+
+            const selectMenu = new StringSelectMenuBuilder()
+                .setCustomId(`change-sector`)
+                .setPlaceholder('Selecione o setor adequado')
+                .addOptions(
+                    Array.from(Sectors.cache.values())
+                        .filter(sector => sector.id !== ticket.sector_id)
+                        .map(sector =>
+                            new StringSelectMenuOptionBuilder()
+                                .setLabel(sector.label)
+                                .setDescription(sector.id)
+                                .setValue(sector.id)
+                        ) as any
+                );
+
+            await interaction.reply({
+                content: 'Qual o setor você quer transferir o atendimento?',
+                components: [
+                    new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu as any)
+                ],
+                ephemeral: true
+            });
+        }
+
         if (interaction.customId === 'close-ticket') {
             const modal = new ModalBuilder()
                 .setCustomId(`close-ticket`)

@@ -59,5 +59,30 @@ export default class ModalEvent extends Listener {
 
             await ticket.close(interaction.client.channels, interaction.fields.getTextInputValue('reason'));
         }
+
+        if (interaction.customId.startsWith('change-sector')) {
+            if (!interaction.channelId) {
+                return;
+            }
+
+            const sector = Sectors.getSectorById(interaction.customId.substring(14));
+
+            if (!sector) {
+                return;
+            }
+
+            const ticket = Tickets.getTicketByThread(interaction.channelId);
+
+            if (!ticket) {
+                return;
+            }
+
+            await interaction.reply({
+                content: 'O atendimento foi transferido com sucesso.',
+                ephemeral: true
+            });
+
+            await ticket.transfer(sector, interaction.client.channels, interaction.fields.getTextInputValue('reason'));
+        }
     }
 }
