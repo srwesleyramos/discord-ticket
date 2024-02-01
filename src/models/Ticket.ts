@@ -112,6 +112,33 @@ export default class Ticket {
         });
     }
 
+    async transferMessage(sector: Sector, channels: ChannelManager, reason: string) {
+        if (!this.sector_id || !this.thread_id) return;
+
+        const generic = await channels.fetch(this.thread_id, {cache: true});
+        const channel = generic as TextChannel;
+
+        await channel.send({
+            embeds: [
+                new EmbedBuilder()
+                    .setAuthor({
+                        name: 'Transferência de setor',
+                        iconURL: channel.client.user.avatarURL() ?? channel.client.user.defaultAvatarURL
+                    })
+                    .setDescription(
+                        'O atendimento foi transferido para outro setor.\n' +
+                        '\n' +
+                        'Detalhes:\n' +
+                        `<:right_arrow:975008491968290866> Setor original: <@&${this.sector_id}>\n` +
+                        `<:right_arrow:975008491968290866> Setor atribuído: <@&${sector.id}>\n` +
+                        '\n' +
+                        'Motivo:\n' +
+                        reason
+                    )
+            ]
+        });
+    }
+
     async welcomeMessage(sector: Sector, channels: ChannelManager) {
         if (!this.sector_id || !this.thread_id) return;
 
