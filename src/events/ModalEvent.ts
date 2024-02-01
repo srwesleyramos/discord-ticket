@@ -30,7 +30,7 @@ export default class ModalEvent extends Listener {
 
         const ticket = new Ticket(null, interaction.user.id);
 
-        await ticket.open(sector, interaction.fields.getTextInputValue('reason'), interaction.channel as TextChannel);
+        await ticket.open(sector, interaction.channel as TextChannel, interaction.fields.getTextInputValue('reason'));
 
         await interaction.followUp({
             content: `O seu atendimento foi criado, use o canal: <#${ticket.thread_id}>`,

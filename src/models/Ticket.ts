@@ -29,7 +29,7 @@ export default class Ticket {
         this.user_id = user_id;
     }
 
-    async open(sector: Sector, reason: string, parent: TextChannel) {
+    async open(sector: Sector, parent: TextChannel, reason: string) {
         const thread = await parent.threads.create({
             name: reason,
             invitable: false,
@@ -89,6 +89,29 @@ export default class Ticket {
         }
     }
 
+    async finishedMessage(sector: Sector, channels: ChannelManager, reason: string) {
+        if (!this.sector_id || !this.thread_id) return;
+
+        const generic = await channels.fetch(this.thread_id, {cache: true});
+        const channel = generic as TextChannel;
+
+        await channel.send({
+            embeds: [
+                new EmbedBuilder()
+                    .setAuthor({
+                        name: 'Atendimento encerrado',
+                        iconURL: channel.client.user.avatarURL() ?? channel.client.user.defaultAvatarURL
+                    })
+                    .setDescription(
+                        'O atendimento foi encerrado e arquivado nas thread.\n' +
+                        '\n' +
+                        'Observação:\n' +
+                        reason
+                    )
+            ]
+        });
+    }
+
     async welcomeMessage(sector: Sector, channels: ChannelManager) {
         if (!this.sector_id || !this.thread_id) return;
 
@@ -127,29 +150,6 @@ export default class Ticket {
                         'Horário comercial:\n' +
                         '<:right_arrow:975008491968290866> segunda a sexta: 08:00 - 18:00\n' +
                         '<:right_arrow:975008491968290866> sábado e domingo: 08:00 - 13:00'
-                    )
-            ]
-        });
-    }
-
-    async finishedMessage(sector: Sector, channels: ChannelManager, reason: string) {
-        if (!this.sector_id || !this.thread_id) return;
-
-        const generic = await channels.fetch(this.thread_id, {cache: true});
-        const channel = generic as TextChannel;
-
-        await channel.send({
-            embeds: [
-                new EmbedBuilder()
-                    .setAuthor({
-                        name: 'Atendimento encerrado',
-                        iconURL: channel.client.user.avatarURL() ?? channel.client.user.defaultAvatarURL
-                    })
-                    .setDescription(
-                        'O atendimento foi encerrado e arquivado nas thread.\n' +
-                        '\n' +
-                        'Informação fornecida:\n' +
-                        reason
                     )
             ]
         });
