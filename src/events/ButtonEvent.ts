@@ -10,7 +10,7 @@ import {
     StringSelectMenuOptionBuilder
 } from "discord.js";
 
-export default class TicketButtonEvent extends Listener {
+export default class ButtonEvent extends Listener {
 
     constructor(client: Client) {
         super(client, 'interactionCreate');

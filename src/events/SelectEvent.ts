@@ -11,7 +11,7 @@ import {
     TextInputStyle
 } from "discord.js";
 
-export default class TicketSelectEvent extends Listener {
+export default class SelectEvent extends Listener {
 
     constructor(client: Client) {
         super(client, 'interactionCreate');

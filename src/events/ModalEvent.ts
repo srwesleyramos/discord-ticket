@@ -2,11 +2,11 @@ import Listener from "../interfaces/Listener";
 import Sectors from "../controllers/SectorController";
 import Tickets from "../controllers/TicketController";
 
-import {Client, Interaction, ModalSubmitInteraction, StringSelectMenuInteraction, TextChannel} from "discord.js";
+import {Client, Interaction, ModalSubmitInteraction, TextChannel} from "discord.js";
 
 import Ticket from "../models/Ticket";
 
-export default class TicketModalEvent extends Listener {
+export default class ModalEvent extends Listener {
 
     constructor(client: Client) {
         super(client, 'interactionCreate');
