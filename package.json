@@ -1,0 +1,29 @@
+{
+  "name": "simple-ticket",
+  "version": "1.0.0",
+  "description": "Um sistema de ticket simples para Discord.",
+  "main": "dist/src/App.js",
+  "scripts": {
+    "start": "tsc --outDir dist/ && node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/srwesleyramos/simple-ticket.git"
+  },
+  "author": "Wesley Ramos <dev.wesleygabriel@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/srwesleyramos/simple-ticket/issues"
+  },
+  "homepage": "https://github.com/srwesleyramos/simple-ticket#readme",
+  "dependencies": {
+    "discord.js": "^14.14.1",
+    "mysql2": "^3.9.1",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.8",
+    "discord-api-types": "^0.37.67",
+    "typescript": "^5.3.3"
+  }
+}
