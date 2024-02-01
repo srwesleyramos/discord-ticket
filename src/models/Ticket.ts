@@ -1,4 +1,5 @@
 import Sector from "./Sector";
+import Sectors from "../controllers/SectorController";
 
 import {
     ActionRowBuilder,
@@ -42,6 +43,22 @@ export default class Ticket {
 
         await this.welcomeMessage(sector, thread.client.channels);
         await this.createMembers(sector, thread.client.channels);
+    }
+
+    async close(channels: ChannelManager, reason: string) {
+        if (!this.sector_id || !this.thread_id) return;
+
+        const generic = await channels.fetch(this.thread_id, {cache: true});
+        const channel = generic as PrivateThreadChannel;
+        const sector = Sectors.getSectorById(this.sector_id);
+
+        if (sector) {
+            await this.removeMembers(sector, channels);
+            await this.finishedMessage(sector, channels, reason);
+        }
+
+        await channel.setLocked(true);
+        await channel.setArchived(true);
     }
 
     async createMembers(sector: Sector, channels: ChannelManager) {
@@ -110,6 +127,29 @@ export default class Ticket {
                         'Horário comercial:\n' +
                         '<:right_arrow:975008491968290866> segunda a sexta: 08:00 - 18:00\n' +
                         '<:right_arrow:975008491968290866> sábado e domingo: 08:00 - 13:00'
+                    )
+            ]
+        });
+    }
+
+    async finishedMessage(sector: Sector, channels: ChannelManager, reason: string) {
+        if (!this.sector_id || !this.thread_id) return;
+
+        const generic = await channels.fetch(this.thread_id, {cache: true});
+        const channel = generic as TextChannel;
+
+        await channel.send({
+            embeds: [
+                new EmbedBuilder()
+                    .setAuthor({
+                        name: 'Atendimento encerrado',
+                        iconURL: channel.client.user.avatarURL() ?? channel.client.user.defaultAvatarURL
+                    })
+                    .setDescription(
+                        'O atendimento foi encerrado e arquivado nas thread.\n' +
+                        '\n' +
+                        'Informação fornecida:\n' +
+                        reason
                     )
             ]
         });
