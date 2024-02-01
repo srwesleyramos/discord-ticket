@@ -17,12 +17,12 @@
   },
   "homepage": "https://github.com/srwesleyramos/simple-ticket#readme",
   "dependencies": {
+    "@types/uuid": "^9.0.8",
     "discord.js": "^14.14.1",
     "mysql2": "^3.9.1",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@types/uuid": "^9.0.8",
     "discord-api-types": "^0.37.67",
     "typescript": "^5.3.3"
   }
