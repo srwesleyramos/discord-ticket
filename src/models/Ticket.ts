@@ -61,6 +61,21 @@ export default class Ticket {
         await channel.setArchived(true);
     }
 
+    async transfer(sector: Sector, channels: ChannelManager, reason: string) {
+        if (!this.sector_id || !this.thread_id) return;
+
+        const current = Sectors.getSectorById(this.sector_id);
+
+        if (current) {
+            await this.removeMembers(current, channels);
+        }
+
+        await this.transferMessage(sector, channels, reason);
+        await this.createMembers(sector, channels);
+
+        this.sector_id = sector.id;
+    }
+
     async createMembers(sector: Sector, channels: ChannelManager) {
         if (!this.sector_id || !this.thread_id) return;
 
