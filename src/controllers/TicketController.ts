@@ -14,7 +14,7 @@ class TicketController {
     async start() {
         console.log('[Simple Ticket] [Ticket] [INFO]: o controlador de atendimentos foi inicializado.');
 
-        const [rows] = await Database.client.query<TicketDTO[]>('SELECT * FROM tickets;');
+        const [rows] = await Database.query<TicketDTO[]>('SELECT * FROM tickets;');
 
         for (const row of rows) {
             this.cache.set(row.id, new Ticket(row.id, row.user_id, row.sector_id, row.thread_id));
@@ -24,7 +24,7 @@ class TicketController {
     }
 
     async create(ticket: Ticket) {
-        await Database.client.execute(
+        await Database.query(
             'INSERT INTO tickets (id, sector_id, thread_id, user_id) VALUES (?, ?, ?, ?);',
             [ticket.id, ticket.sector_id, ticket.thread_id, ticket.user_id]
         );
@@ -33,7 +33,7 @@ class TicketController {
     }
 
     async remove(ticket: Ticket) {
-        await Database.client.execute(
+        await Database.query(
             'DELETE FROM tickets WHERE id = ?;',
             [ticket.id]
         );

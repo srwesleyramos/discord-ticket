@@ -1,23 +1,22 @@
 import config from '../../data/mysql.json';
-import mysql, {Connection} from 'mysql2/promise';
+import mysql, {FieldPacket, Pool, RowDataPacket} from 'mysql2/promise';
 
 class DatabaseService {
 
-    client: Connection;
+    private pool: Pool;
 
     async start() {
         console.log('[Simple Ticket] [Database] [INFO]: iniciando conexão ao banco de dados...');
 
-        this.client = await mysql.createConnection({
-            keepAliveInitialDelay: 30000,
-            enableKeepAlive: true,
+        this.pool = await mysql.createPool({
             host: config.MYSQL_HOSTNAME,
             user: config.MYSQL_USERNAME,
             password: config.MYSQL_PASSWORD,
-            database: config.MYSQL_DATABASE
+            database: config.MYSQL_DATABASE,
+            waitForConnections: true
         });
 
-        await this.client.query(`
+        await this.query(`
             CREATE TABLE IF NOT EXISTS tickets
             (
                 id        VARCHAR(36) NOT NULL,
@@ -29,6 +28,14 @@ class DatabaseService {
         `);
 
         console.log('[Simple Ticket] [Database] [INFO]: a conexão com o banco de dados foi aberta.');
+    }
+
+    async query<
+        T extends | RowDataPacket[]
+    >(sql: string, values?: any): Promise<[T, FieldPacket[]]> {
+        const connection = await this.pool.getConnection();
+
+        return await connection.query(sql, values);
     }
 }
 
