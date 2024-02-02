@@ -9,6 +9,7 @@ class DatabaseService {
         console.log('[Simple Ticket] [Database] [INFO]: iniciando conexão ao banco de dados...');
 
         this.client = await mysql.createConnection({
+            keepAliveInitialDelay: 30000,
             enableKeepAlive: true,
             host: config.MYSQL_HOSTNAME,
             user: config.MYSQL_USERNAME,
