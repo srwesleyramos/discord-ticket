@@ -55,7 +55,7 @@ export default class ButtonEvent extends Listener {
             );
 
         await interaction.reply({
-            content: 'Qual o setor você quer abrir o atendimento?',
+            content: 'Em qual setor você quer abrir o atendimento?',
             components: [
                 new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select as any)
             ],
@@ -104,7 +104,7 @@ export default class ButtonEvent extends Listener {
 
         const select = new StringSelectMenuBuilder()
             .setCustomId('transfer-ticket')
-            .setPlaceholder('Qual o setor do atendimento?')
+            .setPlaceholder('Selecione o setor para transferencia')
             .addOptions(
                 options as any
             );

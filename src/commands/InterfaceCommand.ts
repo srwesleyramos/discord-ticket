@@ -20,7 +20,7 @@ export default class InterfaceCommand extends Command {
 
     async execute(interaction: ChatInputCommandInteraction) {
         await interaction.reply({
-            content: '<:right_arrow:975008491968290866> a interface para atendimentos foi enviada.',
+            content: '<:right_arrow:975008491968290866> A interface para atendimentos foi enviada.',
             ephemeral: true
         });
 
