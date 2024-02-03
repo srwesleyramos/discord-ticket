@@ -23,53 +23,69 @@ export default class SelectEvent extends Listener {
         }
 
         if (interaction.customId === 'create-ticket') {
-            const sector = Sectors.getSectorById(interaction.values[0]);
-
-            if (!sector) {
-                return;
-            }
-
-            const modal = new ModalBuilder()
-                .setCustomId(`create-ticket:${sector.id}`)
-                .setTitle(sector.label)
-                .addComponents(
-                    new ActionRowBuilder<TextInputBuilder>()
-                        .addComponents(
-                            new TextInputBuilder()
-                                .setCustomId('reason')
-                                .setLabel("Descreva o seu problema")
-                                .setStyle(TextInputStyle.Short)
-                                .setMinLength(12)
-                                .setMaxLength(32) as any
-                        ) as any
-                );
-
-            await interaction.showModal(modal);
+            await this.createTicket(interaction);
         }
 
-        if (interaction.customId === 'change-sector') {
-            const sector = Sectors.getSectorById(interaction.values[0]);
-
-            if (!sector) {
-                return;
-            }
-
-            const modal = new ModalBuilder()
-                .setCustomId(`change-sector:${sector.id}`)
-                .setTitle(sector.label)
-                .addComponents(
-                    new ActionRowBuilder<TextInputBuilder>()
-                        .addComponents(
-                            new TextInputBuilder()
-                                .setCustomId('reason')
-                                .setLabel("Descreva o seu problema")
-                                .setStyle(TextInputStyle.Short)
-                                .setMinLength(12)
-                                .setMaxLength(32) as any
-                        ) as any
-                );
-
-            await interaction.showModal(modal);
+        if (interaction.customId === 'transfer-ticket') {
+            await this.transferTicket(interaction);
         }
+    }
+
+    async createTicket(interaction: StringSelectMenuInteraction) {
+        const sector = Sectors.getSectorById(interaction.values[0]);
+
+        if (!sector) {
+            return;
+        }
+
+        const input = new TextInputBuilder()
+            .setCustomId('reason')
+            .setLabel("Descreva o seu problema")
+            .setStyle(TextInputStyle.Short)
+            .setMinLength(16)
+            .setMaxLength(64);
+
+        const row = new ActionRowBuilder<TextInputBuilder>()
+            .addComponents(
+                input as any
+            );
+
+        const modal = new ModalBuilder()
+            .setCustomId(`create-ticket:${sector.id}`)
+            .setTitle(sector.label)
+            .addComponents(
+                row as any
+            );
+
+        await interaction.showModal(modal);
+    }
+
+    async transferTicket(interaction: StringSelectMenuInteraction) {
+        const sector = Sectors.getSectorById(interaction.values[0]);
+
+        if (!sector) {
+            return;
+        }
+
+        const input = new TextInputBuilder()
+            .setCustomId('reason')
+            .setLabel("Descreva o motivo")
+            .setStyle(TextInputStyle.Short)
+            .setMinLength(16)
+            .setMaxLength(64);
+
+        const row = new ActionRowBuilder<TextInputBuilder>()
+            .addComponents(
+                input as any
+            );
+
+        const modal = new ModalBuilder()
+            .setCustomId(`transfer-ticket:${sector.id}`)
+            .setTitle(sector.label)
+            .addComponents(
+                row as any
+            );
+
+        await interaction.showModal(modal);
     }
 }
