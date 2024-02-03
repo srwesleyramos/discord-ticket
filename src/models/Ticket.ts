@@ -20,11 +20,13 @@ export default class Ticket {
     readonly id: string;
     readonly user_id: string;
 
+    state: string | null;
     sector_id: string | null;
     thread_id: string | null;
 
-    constructor(id: string | null, user_id: string, sector_id?: string, thread_id?: string) {
+    constructor(id: string | null, user_id: string, sector_id?: string, thread_id?: string, state?: string) {
         this.id = id ?? uuid();
+        this.state = state ?? null;
         this.sector_id = sector_id ?? null;
         this.thread_id = thread_id ?? null;
         this.user_id = user_id;
@@ -40,6 +42,7 @@ export default class Ticket {
 
         await thread.members.add(this.user_id);
 
+        this.state = 'OPEN';
         this.sector_id = sector.id;
         this.thread_id = thread.id;
 
@@ -61,6 +64,8 @@ export default class Ticket {
 
         await channel.setLocked(true);
         await channel.setArchived(true);
+
+        this.state = 'CLOSED';
     }
 
     async transfer(sector: Sector, channels: ChannelManager, reason: string) {

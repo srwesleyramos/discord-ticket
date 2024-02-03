@@ -17,7 +17,7 @@ class TicketController {
         const [rows] = await Database.query<TicketDTO[]>('SELECT * FROM tickets;');
 
         for (const row of rows) {
-            this.cache.set(row.id, new Ticket(row.id, row.user_id, row.sector_id, row.thread_id));
+            this.cache.set(row.id, new Ticket(row.id, row.user_id, row.sector_id, row.thread_id, row.state));
         }
 
         console.log('[Simple Ticket] [Ticket] [INFO]: os atendimentos foram carregados com êxito.');
@@ -25,8 +25,8 @@ class TicketController {
 
     async create(ticket: Ticket) {
         await Database.query(
-            'INSERT INTO tickets (id, sector_id, thread_id, user_id) VALUES (?, ?, ?, ?);',
-            [ticket.id, ticket.sector_id, ticket.thread_id, ticket.user_id]
+            'INSERT INTO tickets (id, state, sector_id, thread_id, user_id) VALUES (?, ?, ?, ?, ?);',
+            [ticket.id, ticket.state, ticket.sector_id, ticket.thread_id, ticket.user_id]
         );
 
         this.cache.set(ticket.id, ticket);
@@ -41,12 +41,21 @@ class TicketController {
         this.cache.delete(ticket.id);
     }
 
+    async update(ticket: Ticket) {
+        await Database.query(
+            'UPDATE tickets SET state = ?, sector_id = ?, thread_id = ?, user_id = ? WHERE id = ?;',
+            [ticket.state, ticket.sector_id, ticket.thread_id, ticket.user_id, ticket.id]
+        );
+
+        this.cache.set(ticket.id, ticket);
+    }
+
     getTicketById(id: string) {
         return Array.from(this.cache.values()).find(ticket => ticket.id === id);
     }
 
     getTicketBySector(sector_id: string) {
-        return Array.from(this.cache.values()).find(ticket => ticket.sector_id === sector_id);
+        return Array.from(this.cache.values()).filter(ticket => ticket.sector_id === sector_id);
     }
 
     getTicketByThread(thread_id: string) {
@@ -54,7 +63,7 @@ class TicketController {
     }
 
     getTicketByUser(user_id: string) {
-        return Array.from(this.cache.values()).find(ticket => ticket.user_id === user_id);
+        return Array.from(this.cache.values()).filter(ticket => ticket.user_id === user_id);
     }
 }
 

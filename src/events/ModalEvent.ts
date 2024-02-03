@@ -37,10 +37,21 @@ export default class ModalEvent extends Listener {
             return;
         }
 
-        await interaction.reply({
-            content: 'Criando seu atendimento, aguarde...',
-            ephemeral: true
-        });
+        const exists = Tickets.getTicketByUser(interaction.user.id)
+            .filter(ticket => ticket.state === 'OPEN');
+
+        if (exists.length > 0) {
+            await interaction.reply({
+                content: `Você já possui um atendimento em andamento, use <#${exists[0].thread_id}>!`,
+                ephemeral: true
+            });
+            return;
+        } else {
+            await interaction.reply({
+                content: 'Criando seu atendimento, aguarde...',
+                ephemeral: true
+            });
+        }
 
         const channel = interaction.channel as TextChannel;
         const reason = interaction.fields.getTextInputValue('reason');
@@ -73,6 +84,8 @@ export default class ModalEvent extends Listener {
         });
 
         await ticket.close(interaction.client.channels, interaction.fields.getTextInputValue('reason'));
+
+        await Tickets.update(ticket);
     }
 
     async transferTicket(interaction: ModalSubmitInteraction) {
