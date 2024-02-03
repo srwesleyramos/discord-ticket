@@ -166,7 +166,7 @@ export default class Ticket {
                     .addComponents(
                         [
                             new ButtonBuilder()
-                                .setCustomId("change-sector")
+                                .setCustomId("transfer-ticket")
                                 .setLabel("Trocar setor")
                                 .setStyle(ButtonStyle.Primary),
                             new ButtonBuilder()

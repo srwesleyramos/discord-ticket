@@ -26,75 +26,95 @@ export default class ButtonEvent extends Listener {
         }
 
         if (interaction.customId === 'create-ticket') {
-            const selectMenu = new StringSelectMenuBuilder()
-                .setCustomId(`create-ticket`)
-                .setPlaceholder('Selecione o setor adequado')
-                .addOptions(
-                    Array.from(Sectors.cache.values())
-                        .map(sector =>
-                            new StringSelectMenuOptionBuilder()
-                                .setLabel(sector.label)
-                                .setDescription(sector.id)
-                                .setValue(sector.id)
-                        ) as any
-                );
-
-            await interaction.reply({
-                content: 'Qual o setor você quer abrir o atendimento?',
-                components: [
-                    new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu as any)
-                ],
-                ephemeral: true
-            });
-        }
-
-        if (interaction.customId === 'change-sector') {
-            const ticket = Tickets.getTicketByThread(interaction.channelId);
-
-            if (!ticket) {
-                return;
-            }
-
-            const selectMenu = new StringSelectMenuBuilder()
-                .setCustomId(`change-sector`)
-                .setPlaceholder('Selecione o setor adequado')
-                .addOptions(
-                    Array.from(Sectors.cache.values())
-                        .filter(sector => sector.id !== ticket.sector_id)
-                        .map(sector =>
-                            new StringSelectMenuOptionBuilder()
-                                .setLabel(sector.label)
-                                .setDescription(sector.id)
-                                .setValue(sector.id)
-                        ) as any
-                );
-
-            await interaction.reply({
-                content: 'Qual o setor você quer transferir o atendimento?',
-                components: [
-                    new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu as any)
-                ],
-                ephemeral: true
-            });
+            await this.createTicket(interaction);
         }
 
         if (interaction.customId === 'close-ticket') {
-            const modal = new ModalBuilder()
-                .setCustomId(`close-ticket`)
-                .setTitle('Encerrar atendimento')
-                .addComponents(
-                    new ActionRowBuilder<TextInputBuilder>()
-                        .addComponents(
-                            new TextInputBuilder()
-                                .setCustomId('reason')
-                                .setLabel("Qual o resultado do atendimento?")
-                                .setStyle(TextInputStyle.Short)
-                                .setMinLength(8)
-                                .setMaxLength(64) as any
-                        ) as any
-                );
-
-            await interaction.showModal(modal);
+            await this.closeTicket(interaction);
         }
+
+        if (interaction.customId === 'transfer-ticket') {
+            await this.transferTicket(interaction);
+        }
+    }
+
+    async createTicket(interaction: ButtonInteraction) {
+        const options = Array.from(Sectors.cache.values())
+            .map(sector =>
+                new StringSelectMenuOptionBuilder()
+                    .setLabel(sector.label)
+                    .setDescription(sector.id)
+                    .setValue(sector.id)
+            );
+
+        const select = new StringSelectMenuBuilder()
+            .setCustomId('create-ticket')
+            .setPlaceholder('Selecione o setor para atendimento')
+            .addOptions(
+                options as any
+            );
+
+        await interaction.reply({
+            content: 'Qual o setor você quer abrir o atendimento?',
+            components: [
+                new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select as any)
+            ],
+            ephemeral: true
+        });
+    }
+
+    async closeTicket(interaction: ButtonInteraction) {
+        const input = new TextInputBuilder()
+            .setCustomId('reason')
+            .setLabel("Observações")
+            .setMinLength(8)
+            .setMaxLength(128)
+            .setStyle(TextInputStyle.Short)
+
+        const row = new ActionRowBuilder<TextInputBuilder>()
+            .addComponents(
+                input as any
+            );
+
+        const modal = new ModalBuilder()
+            .setCustomId('close-ticket')
+            .setTitle('Encerrar atendimento')
+            .addComponents(
+                row as any
+            );
+
+        await interaction.showModal(modal);
+    }
+
+    async transferTicket(interaction: ButtonInteraction) {
+        const ticket = Tickets.getTicketByThread(interaction.channelId);
+
+        if (!ticket) {
+            return;
+        }
+
+        const options = Array.from(Sectors.cache.values())
+            .filter(sector => sector.id !== ticket.sector_id)
+            .map(sector =>
+                new StringSelectMenuOptionBuilder()
+                    .setLabel(sector.label)
+                    .setDescription(sector.id)
+                    .setValue(sector.id)
+            );
+
+        const select = new StringSelectMenuBuilder()
+            .setCustomId('transfer-ticket')
+            .setPlaceholder('Qual o setor do atendimento?')
+            .addOptions(
+                options as any
+            );
+
+        await interaction.reply({
+            content: 'Para qual setor o atendimento será transferido?',
+            components: [
+                new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select as any)
+            ],
+            ephemeral: true
+        });
     }
 }
