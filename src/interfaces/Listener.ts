@@ -2,8 +2,8 @@ import {Client} from "discord.js";
 
 export default class Listener {
 
-    client: Client;
-    name: String;
+    readonly client: Client;
+    readonly name: String;
 
     constructor(client: Client, name: String) {
         this.client = client;

@@ -2,8 +2,8 @@ import {ChatInputCommandInteraction, Client, SlashCommandBuilder, SlashCommandSu
 
 export default class Command {
 
-    client: Client;
-    name: String;
+    readonly client: Client;
+    readonly name: String;
 
     constructor(client: Client, name: String) {
         this.client = client;
