@@ -9,7 +9,8 @@ import {
     ChannelType,
     EmbedBuilder,
     PrivateThreadChannel,
-    TextChannel
+    TextChannel,
+    ThreadAutoArchiveDuration
 } from "discord.js";
 
 import {v4 as uuid} from "uuid";
@@ -31,6 +32,7 @@ export default class Ticket {
 
     async open(sector: Sector, parent: TextChannel, reason: string) {
         const thread = await parent.threads.create({
+            autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
             name: reason,
             invitable: false,
             type: ChannelType.PrivateThread
@@ -42,7 +44,7 @@ export default class Ticket {
         this.thread_id = thread.id;
 
         await this.welcomeMessage(sector, thread.client.channels);
-        await this.createMembers(sector, thread.client.channels);
+        await this.addMembers(sector, thread.client.channels);
     }
 
     async close(channels: ChannelManager, reason: string) {
@@ -71,12 +73,12 @@ export default class Ticket {
         }
 
         await this.transferMessage(sector, channels, reason);
-        await this.createMembers(sector, channels);
+        await this.addMembers(sector, channels);
 
         this.sector_id = sector.id;
     }
 
-    async createMembers(sector: Sector, channels: ChannelManager) {
+    async addMembers(sector: Sector, channels: ChannelManager) {
         if (!this.sector_id || !this.thread_id) return;
 
         const generic = await channels.fetch(this.thread_id, {cache: true});
@@ -84,9 +86,7 @@ export default class Ticket {
         const members = await sector.get(channel.guild);
 
         for (const member of Array.from(members.values())) {
-            if (member.id !== this.user_id) {
-                await channel.members.add(member);
-            }
+            await channel.members.add(member);
         }
     }
 
