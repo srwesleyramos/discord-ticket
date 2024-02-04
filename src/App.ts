@@ -1,7 +1,7 @@
 import DatabaseService from './services/DatabaseService';
 
 import CategoryController from './controllers/SectorController';
-import ThreadController from './controllers/TicketController';
+import TicketController from './controllers/TicketController';
 
 import Command from "./interfaces/Command";
 
@@ -38,7 +38,7 @@ class App {
 
             await DatabaseService.start();
             await CategoryController.start();
-            await ThreadController.start();
+            await TicketController.start(this.client);
 
             this.registerCommands();
             this.registerEvents();

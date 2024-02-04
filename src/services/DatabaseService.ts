@@ -20,7 +20,6 @@ class DatabaseService {
             CREATE TABLE IF NOT EXISTS tickets
             (
                 id        VARCHAR(36) NOT NULL,
-                state     VARCHAR(6)  NOT NULL,
                 sector_id VARCHAR(36) NOT NULL,
                 thread_id VARCHAR(36) NOT NULL,
                 user_id   VARCHAR(36) NOT NULL,

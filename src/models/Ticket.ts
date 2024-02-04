@@ -1,5 +1,6 @@
 import Sector from "./Sector";
 import Sectors from "../controllers/SectorController";
+import State from "../interfaces/State";
 
 import {
     ActionRowBuilder,
@@ -20,17 +21,42 @@ export default class Ticket {
     readonly id: string;
     readonly user_id: string;
 
-    state: string | null;
+    state: State;
     sector_id: string | null;
     thread_id: string | null;
 
-    constructor(id: string | null, user_id: string, sector_id?: string, thread_id?: string, state?: string) {
+    constructor(id: string | null, user_id: string, sector_id?: string, thread_id?: string, state?: State) {
         this.id = id ?? uuid();
-        this.state = state ?? null;
+        this.state = state ?? State.UNKNOWN;
         this.sector_id = sector_id ?? null;
         this.thread_id = thread_id ?? null;
         this.user_id = user_id;
     }
+
+    async init(channels: ChannelManager) {
+        if (!this.thread_id) {
+            this.state = State.UNKNOWN;
+            return;
+        }
+
+        try {
+            const generic = await channels.fetch(this.thread_id, {cache: true});
+
+            if (generic) {
+                const channel = generic as PrivateThreadChannel;
+
+                this.state = channel.archived ? State.CLOSED : State.OPEN;
+            } else {
+                this.state = State.UNKNOWN;
+            }
+        } catch (error) {
+            this.state = State.UNKNOWN;
+        }
+    }
+
+    /*                                                  *
+     *               GERENCIANDO O TICKET               *
+     *                                                  */
 
     async open(sector: Sector, parent: TextChannel, reason: string) {
         const thread = await parent.threads.create({
@@ -42,12 +68,12 @@ export default class Ticket {
 
         await thread.members.add(this.user_id);
 
-        this.state = 'OPEN';
+        this.state = State.OPEN;
         this.sector_id = sector.id;
         this.thread_id = thread.id;
 
         await this.welcomeMessage(sector, thread.client.channels);
-        await this.addMembers(sector, thread.client.channels);
+        await this.insertMembers(sector, thread.client.channels);
     }
 
     async close(channels: ChannelManager, reason: string) {
@@ -59,13 +85,13 @@ export default class Ticket {
 
         if (sector) {
             await this.removeMembers(sector, channels);
-            await this.finishedMessage(sector, channels, reason);
+            await this.solvedMessage(sector, channels, reason);
         }
 
         await channel.setLocked(true);
         await channel.setArchived(true);
 
-        this.state = 'CLOSED';
+        this.state = State.CLOSED;
     }
 
     async transfer(sector: Sector, channels: ChannelManager, reason: string) {
@@ -78,12 +104,16 @@ export default class Ticket {
         }
 
         await this.transferMessage(sector, channels, reason);
-        await this.addMembers(sector, channels);
+        await this.insertMembers(sector, channels);
 
         this.sector_id = sector.id;
     }
 
-    async addMembers(sector: Sector, channels: ChannelManager) {
+    /*                                                  *
+     *            ABRINDO O TICKET PRA STAFF            *
+     *                                                  */
+
+    async insertMembers(sector: Sector, channels: ChannelManager) {
         if (!this.sector_id || !this.thread_id) return;
 
         const generic = await channels.fetch(this.thread_id, {cache: true});
@@ -109,7 +139,11 @@ export default class Ticket {
         }
     }
 
-    async finishedMessage(sector: Sector, channels: ChannelManager, reason: string) {
+    /*                                                  *
+     *             INTERAGINDO COM O TICKET             *
+     *                                                  */
+
+    async solvedMessage(sector: Sector, channels: ChannelManager, reason: string) {
         if (!this.sector_id || !this.thread_id) return;
 
         const generic = await channels.fetch(this.thread_id, {cache: true});

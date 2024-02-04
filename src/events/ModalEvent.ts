@@ -5,6 +5,7 @@ import {Client, Interaction, ModalSubmitInteraction, TextChannel} from "discord.
 
 import Listener from "../interfaces/Listener";
 import Ticket from "../models/Ticket";
+import State from "../interfaces/State";
 
 export default class ModalEvent extends Listener {
 
@@ -38,7 +39,7 @@ export default class ModalEvent extends Listener {
         }
 
         const exists = Tickets.getTicketByUser(interaction.user.id)
-            .filter(ticket => ticket.state === 'OPEN');
+            .filter(ticket => ticket.state === State.OPEN);
 
         if (exists.length > 0) {
             await interaction.reply({

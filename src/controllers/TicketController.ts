@@ -1,5 +1,7 @@
 import Database from '../services/DatabaseService';
 
+import {Client} from "discord.js";
+
 import Ticket from "../models/Ticket";
 import TicketDTO from "../dto/TicketDTO";
 
@@ -11,13 +13,16 @@ class TicketController {
         this.cache = new Map();
     }
 
-    async start() {
+    async start(client: Client) {
         console.log('[Simple Ticket] [Ticket] [INFO]: o controlador de atendimentos foi inicializado.');
 
         const [rows] = await Database.query<TicketDTO[]>('SELECT * FROM tickets;');
 
         for (const row of rows) {
-            this.cache.set(row.id, new Ticket(row.id, row.user_id, row.sector_id, row.thread_id, row.state));
+            const ticket = new Ticket(row.id, row.user_id, row.sector_id, row.thread_id);
+            await ticket.init(client.channels);
+
+            this.cache.set(row.id, ticket);
         }
 
         console.log('[Simple Ticket] [Ticket] [INFO]: os atendimentos foram carregados com êxito.');
@@ -25,8 +30,8 @@ class TicketController {
 
     async create(ticket: Ticket) {
         await Database.query(
-            'INSERT INTO tickets (id, state, sector_id, thread_id, user_id) VALUES (?, ?, ?, ?, ?);',
-            [ticket.id, ticket.state, ticket.sector_id, ticket.thread_id, ticket.user_id]
+            'INSERT INTO tickets (id, sector_id, thread_id, user_id) VALUES (?, ?, ?, ?);',
+            [ticket.id, ticket.sector_id, ticket.thread_id, ticket.user_id]
         );
 
         this.cache.set(ticket.id, ticket);
@@ -43,8 +48,8 @@ class TicketController {
 
     async update(ticket: Ticket) {
         await Database.query(
-            'UPDATE tickets SET state = ?, sector_id = ?, thread_id = ?, user_id = ? WHERE id = ?;',
-            [ticket.state, ticket.sector_id, ticket.thread_id, ticket.user_id, ticket.id]
+            'UPDATE tickets SET sector_id = ?, thread_id = ?, user_id = ? WHERE id = ?;',
+            [ticket.sector_id, ticket.thread_id, ticket.user_id, ticket.id]
         );
 
         this.cache.set(ticket.id, ticket);
