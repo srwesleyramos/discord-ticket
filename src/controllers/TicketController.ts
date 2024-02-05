@@ -14,7 +14,7 @@ class TicketController {
     }
 
     async start(client: Client) {
-        console.log('[Simple Ticket] [Ticket] [INFO]: o controlador de atendimentos foi inicializado.');
+        console.info('[Simple Ticket] [Ticket] [INFO]: o controlador de atendimentos foi inicializado.');
 
         const [rows] = await Database.query<TicketDTO[]>('SELECT * FROM tickets;');
 
@@ -25,7 +25,7 @@ class TicketController {
             this.cache.set(row.id, ticket);
         }
 
-        console.log('[Simple Ticket] [Ticket] [INFO]: os atendimentos foram carregados com êxito.');
+        console.info('[Simple Ticket] [Ticket] [INFO]: os atendimentos foram carregados com êxito.');
     }
 
     async create(ticket: Ticket) {

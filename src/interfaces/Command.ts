@@ -11,7 +11,7 @@ export default class Command {
     }
 
     async execute(interaction: ChatInputCommandInteraction) {
-        console.log('o comando', this.name, 'não foi implementado.');
+        console.info('o comando', this.name, 'não foi implementado.');
     }
 
     getSlashCommand(): SlashCommandBuilder | SlashCommandSubcommandsOnlyBuilder {

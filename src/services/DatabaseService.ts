@@ -6,7 +6,7 @@ class DatabaseService {
     private pool: Pool;
 
     async start() {
-        console.log('[Simple Ticket] [Database] [INFO]: iniciando conexão ao banco de dados...');
+        console.info('[Simple Ticket] [Database] [INFO]: iniciando conexão ao banco de dados...');
 
         this.pool = await mysql.createPool({
             host: config.MYSQL_HOSTNAME,
@@ -27,7 +27,7 @@ class DatabaseService {
             );
         `);
 
-        console.log('[Simple Ticket] [Database] [INFO]: a conexão com o banco de dados foi aberta.');
+        console.info('[Simple Ticket] [Database] [INFO]: a conexão com o banco de dados foi aberta.');
     }
 
     async query<

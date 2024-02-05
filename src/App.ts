@@ -44,30 +44,38 @@ class App {
             this.registerHandler();
             this.registerWatcher();
 
-            console.log('[Simple Ticket] [App] [INFO]: a aplicação estabeleceu conexão com o Discord.');
+            console.info('[Simple Ticket] [App] [INFO]: a aplicação estabeleceu conexão com o Discord.');
         });
     }
 
     registerCommands() {
-        readdirSync('./dist/src/commands/').forEach(name => {
-            const Command = require(`./commands/${name}`);
-            const command = new Command.default(this.client);
+        console.info('[Simple Ticket] [Command] [INFO]: iniciando o carregamento dos comandos.');
 
-            this.cache.set(command.name, command);
+        readdirSync('./dist/src/commands/').forEach(name => {
+            const command = require(`./commands/${name}`).default;
+            const instance = new command(this.client);
+
+            console.info(`[Simple Ticket] [Command] [INFO]: o comando ${instance.name} foi registrado.`);
+
+            this.cache.set(instance.name, instance);
         });
 
-        console.log('[Simple Ticket] [App] [INFO]: os comandos foram carregados com sucesso.');
+        console.info('[Simple Ticket] [Command] [INFO]: os comandos foram carregados com sucesso.');
     }
 
     registerEvents() {
-        readdirSync('./dist/src/events/').forEach(name => {
-            const Listener = require(`./events/${name}`);
-            const listener = new Listener.default(this.client);
+        console.info('[Simple Ticket] [Event] [INFO]: iniciando o carregamento dos eventos.');
 
-            this.client.on(listener.name, (...args) => listener.execute(...args));
+        readdirSync('./dist/src/events/').forEach(name => {
+            const listener = require(`./events/${name}`);
+            const instance = new listener.default(this.client);
+
+            console.info(`[Simple Ticket] [Event] [INFO]: o evento ${name.substring(0, name.length - 8).toLowerCase()} foi registrado.`);
+
+            this.client.on(instance.name, (...args) => instance.execute(...args));
         });
 
-        console.log('[Simple Ticket] [App] [INFO]: os eventos foram carregados com sucesso.');
+        console.info('[Simple Ticket] [Event] [INFO]: os eventos foram carregados com sucesso.');
     }
 
     registerHandler() {

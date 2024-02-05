@@ -10,13 +10,13 @@ class SectorController {
     }
 
     async start() {
-        console.log('[Simple Ticket] [Sector] [INFO]: o controlador de setores foi inicializado.');
+        console.info('[Simple Ticket] [Sector] [INFO]: o controlador de setores foi inicializado.');
 
         for (const sector of Sectors) {
             this.cache.set(sector.id, new Sector(sector.id, sector.label));
         }
 
-        console.log('[Simple Ticket] [Sector] [INFO]: os setores foram carregados com êxito.');
+        console.info('[Simple Ticket] [Sector] [INFO]: os setores foram carregados com êxito.');
     }
 
     async create(category: Sector) {

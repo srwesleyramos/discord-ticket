@@ -11,6 +11,6 @@ export default class Listener {
     }
 
     async execute(...args: any) {
-        console.log('o listener', this.name, 'não foi implementado.');
+        console.info('o listener', this.name, 'não foi implementado.');
     }
 }
