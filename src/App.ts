@@ -1,13 +1,12 @@
-import DatabaseService from './services/DatabaseService';
-
 import CategoryController from './controllers/SectorController';
+import DatabaseService from './services/DatabaseService';
 import TicketController from './controllers/TicketController';
-
-import Command from "./interfaces/Command";
 
 import {ChatInputCommandInteraction, Client, Interaction} from 'discord.js';
 import {readdirSync} from 'node:fs';
 import {TOKEN} from '../data/token.json';
+
+import Command from "./interfaces/Command";
 
 class App {
 
@@ -43,14 +42,7 @@ class App {
             this.registerCommands();
             this.registerEvents();
             this.registerHandler();
-
-            process.on('unhandledRejection', async (reason) => {
-                console.error(reason); // adicionando durante fase de testes.
-            })
-
-            process.on('uncaughtException', async (reason) => {
-                console.error(reason); // adicionando durante fase de testes.
-            })
+            this.registerWatcher();
 
             console.log('[Simple Ticket] [App] [INFO]: a aplicação estabeleceu conexão com o Discord.');
         });
@@ -87,6 +79,16 @@ class App {
 
                 await command.execute(interaction);
             }
+        });
+    }
+
+    registerWatcher() {
+        process.on('unhandledRejection', async (reason) => {
+            console.error(reason);
+        });
+
+        process.on('uncaughtException', async (error) => {
+            console.error(error);
         });
     }
 }
