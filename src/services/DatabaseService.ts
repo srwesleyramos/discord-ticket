@@ -17,6 +17,16 @@ class DatabaseService {
         });
 
         await this.query(`
+            CREATE TABLE IF NOT EXISTS sectors
+            (
+                id      VARCHAR(36)  NOT NULL,
+                label   VARCHAR(255) NOT NULL,
+                role_id VARCHAR(36)  NOT NULL,
+                PRIMARY KEY (id)
+            );
+        `);
+
+        await this.query(`
             CREATE TABLE IF NOT EXISTS tickets
             (
                 id        VARCHAR(36) NOT NULL,
