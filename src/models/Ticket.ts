@@ -171,6 +171,7 @@ export default class Ticket {
 
         const generic = await channels.fetch(this.thread_id, {cache: true});
         const channel = generic as TextChannel;
+        const latest = Sectors.getSectorById(this.sector_id);
 
         await channel.send({
             embeds: [
@@ -183,8 +184,8 @@ export default class Ticket {
                         'O atendimento foi transferido para outro setor.\n' +
                         '\n' +
                         'Detalhes:\n' +
-                        `<:right_arrow:975008491968290866> Setor original: <@&${this.sector_id}>\n` +
-                        `<:right_arrow:975008491968290866> Setor atribuído: <@&${sector.id}>\n` +
+                        `<:right_arrow:975008491968290866> Setor original: <@&${latest?.role_id ?? this.sector_id}>\n` +
+                        `<:right_arrow:975008491968290866> Setor atribuído: <@&${sector.role_id}>\n` +
                         '\n' +
                         'Motivo:\n' +
                         reason
@@ -225,7 +226,7 @@ export default class Ticket {
                         'Olá! Bem-vindo ao nosso sistema de atendimento ao cliente!\n' +
                         '\n' +
                         'Informações:\n' +
-                        `<:right_arrow:975008491968290866> Atribuíção: <@&${this.sector_id}>\n` +
+                        `<:right_arrow:975008491968290866> Atribuíção: <@&${sector?.role_id}>\n` +
                         `<:right_arrow:975008491968290866> Criado por: <@${this.user_id}>\n` +
                         '\n' +
                         'Horário comercial:\n' +
