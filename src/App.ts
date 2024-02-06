@@ -29,16 +29,11 @@ class App {
 
     init() {
         this.client.login(TOKEN).then(async () => {
-            this.client.guilds.fetch().then(async () => {
-                for (const guild of Array.from(this.client.guilds.cache.values())) {
-                    await guild.members.fetch();
-                }
-            });
-
             await DatabaseService.start();
             await CategoryController.start();
             await TicketController.start(this.client);
 
+            this.registerCache();
             this.registerCommands();
             this.registerEvents();
             this.registerHandler();
@@ -48,8 +43,18 @@ class App {
         });
     }
 
+    registerCache() {
+        this.client.guilds.fetch().then(async () => {
+            for (const guild of Array.from(this.client.guilds.cache.values())) {
+                await guild.members.fetch();
+            }
+        });
+
+        console.info('[Simple Ticket] [Cache] [INFO]: o cache foi iniciado com sucesso.');
+    }
+
     registerCommands() {
-        console.info('[Simple Ticket] [Command] [INFO]: iniciando o carregamento dos comandos.');
+        console.info('[Simple Ticket] [Command] [INFO]: iniciando o carregamento dos comandos...');
 
         readdirSync('./dist/src/commands/').forEach(name => {
             const command = require(`./commands/${name}`).default;
@@ -64,7 +69,7 @@ class App {
     }
 
     registerEvents() {
-        console.info('[Simple Ticket] [Event] [INFO]: iniciando o carregamento dos eventos.');
+        console.info('[Simple Ticket] [Event] [INFO]: iniciando o carregamento dos eventos...');
 
         readdirSync('./dist/src/events/').forEach(name => {
             const listener = require(`./events/${name}`);
@@ -98,6 +103,8 @@ class App {
         process.on('uncaughtException', async (error) => {
             console.error(error);
         });
+
+        console.info('[Simple Ticket] [Watcher] [INFO]: o watcher foi iniciado com sucesso.');
     }
 }
 
