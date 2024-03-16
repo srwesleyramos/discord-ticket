@@ -1,29 +1,29 @@
 import Database from "../services/DatabaseService";
 
-import Sector from "../models/Sector";
-import SectorDTO from "../dto/SectorDTO";
+import SectorModel from "../models/SectorModel";
+import SectorDto from "../dto/SectorDto";
 
 class SectorController {
 
-    cache: Map<String, Sector>;
+    cache: Map<String, SectorModel>;
 
     constructor() {
         this.cache = new Map();
     }
 
     async start() {
-        console.info('[Simple Ticket] [Sector] [INFO]: o controlador de setores foi inicializado.');
+        console.info('[Simple TicketModel] [SectorModel] [INFO]: o controlador de setores foi inicializado.');
 
-        const [rows] = await Database.query<SectorDTO[]>('SELECT * FROM sectors;');
+        const [rows] = await Database.query<SectorDto[]>('SELECT * FROM sectors;');
 
         for (const row of rows) {
-            this.cache.set(row.id, new Sector(row.id, row.label, row.role_id));
+            this.cache.set(row.id, new SectorModel(row.id, row.label, row.role_id));
         }
 
-        console.info('[Simple Ticket] [Sector] [INFO]: os setores foram carregados com êxito.');
+        console.info('[Simple TicketModel] [SectorModel] [INFO]: os setores foram carregados com êxito.');
     }
 
-    async create(sector: Sector) {
+    async create(sector: SectorModel) {
         await Database.query(
             'INSERT INTO sectors (id, label, role_id) VALUES (?, ?, ?);',
             [sector.id, sector.label, sector.role_id]
@@ -32,7 +32,7 @@ class SectorController {
         this.cache.set(sector.id, sector);
     }
 
-    async remove(sector: Sector) {
+    async remove(sector: SectorModel) {
         await Database.query(
             'DELETE FROM sectors WHERE id = ?;',
             [sector.id]
@@ -41,7 +41,7 @@ class SectorController {
         this.cache.delete(sector.id);
     }
 
-    async update(sector: Sector) {
+    async update(sector: SectorModel) {
         await Database.query(
             'UPDATE sectors SET label = ?, role_id = ? WHERE id = ?;',
             [sector.label, sector.role_id, sector.id]

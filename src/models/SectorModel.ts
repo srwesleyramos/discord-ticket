@@ -1,6 +1,6 @@
 import {Collection, Guild, GuildMember, Snowflake} from "discord.js";
 
-export default class Sector {
+export default class SectorModel {
 
     readonly id: string;
     readonly label: string;

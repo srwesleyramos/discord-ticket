@@ -39,7 +39,7 @@ class App {
             this.registerHandler();
             this.registerWatcher();
 
-            console.info('[Simple Ticket] [App] [INFO]: a aplicação estabeleceu conexão com o Discord.');
+            console.info('[Simple TicketModel] [App] [INFO]: a aplicação estabeleceu conexão com o Discord.');
         });
     }
 
@@ -50,11 +50,11 @@ class App {
             }
         });
 
-        console.info('[Simple Ticket] [Cache] [INFO]: o cache foi iniciado com sucesso.');
+        console.info('[Simple TicketModel] [Cache] [INFO]: o cache foi iniciado com sucesso.');
     }
 
     registerCommands() {
-        console.info('[Simple Ticket] [Command] [INFO]: iniciando o carregamento dos comandos...');
+        console.info('[Simple TicketModel] [Command] [INFO]: iniciando o carregamento dos comandos...');
 
         readdirSync('./dist/src/commands/').forEach(name => {
             const command = require(`./commands/${name}`).default;
@@ -65,11 +65,11 @@ class App {
             this.cache.set(instance.name, instance);
         });
 
-        console.info('[Simple Ticket] [Command] [INFO]: os comandos foram carregados com sucesso.');
+        console.info('[Simple TicketModel] [Command] [INFO]: os comandos foram carregados com sucesso.');
     }
 
     registerEvents() {
-        console.info('[Simple Ticket] [Event] [INFO]: iniciando o carregamento dos eventos...');
+        console.info('[Simple TicketModel] [Event] [INFO]: iniciando o carregamento dos eventos...');
 
         readdirSync('./dist/src/events/').forEach(name => {
             const listener = require(`./events/${name}`);
@@ -80,7 +80,7 @@ class App {
             this.client.on(instance.name, (...args) => instance.execute(...args));
         });
 
-        console.info('[Simple Ticket] [Event] [INFO]: os eventos foram carregados com sucesso.');
+        console.info('[Simple TicketModel] [Event] [INFO]: os eventos foram carregados com sucesso.');
     }
 
     registerHandler() {
@@ -104,7 +104,7 @@ class App {
             console.error(error);
         });
 
-        console.info('[Simple Ticket] [Watcher] [INFO]: o watcher foi iniciado com sucesso.');
+        console.info('[Simple TicketModel] [Watcher] [INFO]: o watcher foi iniciado com sucesso.');
     }
 }
 

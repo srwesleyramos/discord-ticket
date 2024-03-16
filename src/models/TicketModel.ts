@@ -1,4 +1,4 @@
-import Sector from "./Sector";
+import SectorModel from "./SectorModel";
 import Sectors from "../controllers/SectorController";
 import State from "../interfaces/State";
 
@@ -16,7 +16,7 @@ import {
 
 import {v4 as uuid} from "uuid";
 
-export default class Ticket {
+export default class TicketModel {
 
     readonly id: string;
     readonly user_id: string;
@@ -58,7 +58,7 @@ export default class Ticket {
      *               GERENCIANDO O TICKET               *
      *                                                  */
 
-    async open(sector: Sector, parent: TextChannel, reason: string) {
+    async open(sector: SectorModel, parent: TextChannel, reason: string) {
         const thread = await parent.threads.create({
             autoArchiveDuration: ThreadAutoArchiveDuration.OneWeek,
             name: reason,
@@ -94,7 +94,7 @@ export default class Ticket {
         this.state = State.CLOSED;
     }
 
-    async transfer(sector: Sector, channels: ChannelManager, reason: string) {
+    async transfer(sector: SectorModel, channels: ChannelManager, reason: string) {
         if (!this.sector_id || !this.thread_id) return;
 
         const current = Sectors.getSectorById(this.sector_id);
@@ -113,7 +113,7 @@ export default class Ticket {
      *            ABRINDO O TICKET PRA STAFF            *
      *                                                  */
 
-    async insertMembers(sector: Sector, channels: ChannelManager) {
+    async insertMembers(sector: SectorModel, channels: ChannelManager) {
         if (!this.sector_id || !this.thread_id) return;
 
         const generic = await channels.fetch(this.thread_id, {cache: true});
@@ -125,7 +125,7 @@ export default class Ticket {
         }
     }
 
-    async removeMembers(sector: Sector, channels: ChannelManager) {
+    async removeMembers(sector: SectorModel, channels: ChannelManager) {
         if (!this.sector_id || !this.thread_id) return;
 
         const generic = await channels.fetch(this.thread_id, {cache: true});
@@ -143,7 +143,7 @@ export default class Ticket {
      *             INTERAGINDO COM O TICKET             *
      *                                                  */
 
-    async solvedMessage(sector: Sector, channels: ChannelManager, reason: string) {
+    async solvedMessage(sector: SectorModel, channels: ChannelManager, reason: string) {
         if (!this.sector_id || !this.thread_id) return;
 
         const generic = await channels.fetch(this.thread_id, {cache: true});
@@ -166,7 +166,7 @@ export default class Ticket {
         });
     }
 
-    async transferMessage(sector: Sector, channels: ChannelManager, reason: string) {
+    async transferMessage(sector: SectorModel, channels: ChannelManager, reason: string) {
         if (!this.sector_id || !this.thread_id) return;
 
         const generic = await channels.fetch(this.thread_id, {cache: true});
@@ -194,7 +194,7 @@ export default class Ticket {
         });
     }
 
-    async welcomeMessage(sector: Sector, channels: ChannelManager) {
+    async welcomeMessage(sector: SectorModel, channels: ChannelManager) {
         if (!this.sector_id || !this.thread_id) return;
 
         const generic = await channels.fetch(this.thread_id, {cache: true});

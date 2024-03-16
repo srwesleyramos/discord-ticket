@@ -4,7 +4,7 @@ import Tickets from "../controllers/TicketController";
 import {Client, Interaction, ModalSubmitInteraction, TextChannel} from "discord.js";
 
 import Listener from "../interfaces/Listener";
-import Ticket from "../models/Ticket";
+import TicketModel from "../models/TicketModel";
 import State from "../interfaces/State";
 
 export default class ModalEvent extends Listener {
@@ -57,7 +57,7 @@ export default class ModalEvent extends Listener {
         const channel = interaction.channel as TextChannel;
         const reason = interaction.fields.getTextInputValue('reason');
 
-        const ticket = new Ticket(null, interaction.user.id);
+        const ticket = new TicketModel(null, interaction.user.id);
         await ticket.open(sector, channel, reason);
 
         await interaction.followUp({
