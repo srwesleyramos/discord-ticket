@@ -1,20 +1,25 @@
 import {Collection, Guild, GuildMember, Snowflake} from "discord.js";
 
-export default class SectorModel {
+class SectorModel {
 
-    readonly id: string;
-    readonly label: string;
-    readonly role_id: string;
+    readonly sector_id: string;
+    readonly guild_id: string;
 
-    constructor(id: string, label: string, role_id: string) {
-        this.id = id;
-        this.label = label;
+    display: string;
+    role_id: string;
+
+    constructor(sector_id: string, guild_id: string, display: string, role_id: string) {
+        this.sector_id = sector_id;
+        this.guild_id = guild_id;
+        this.display = display;
         this.role_id = role_id;
     }
 
-    async get(guild: Guild) {
-        const role = await guild.roles.fetch(this.role_id, {cache: true});
+    async fetch(guild: Guild) {
+        const role = await guild.roles.fetch(this.role_id, {force: true});
 
         return role?.members ?? new Collection<Snowflake, GuildMember>();
     }
 }
+
+export default SectorModel;
