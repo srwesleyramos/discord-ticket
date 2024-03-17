@@ -15,6 +15,9 @@ class SectorModel {
         this.role_id = role_id;
     }
 
+    // show(thread);
+    // hide(thread);
+
     async fetch(guild: Guild) {
         const role = await guild.roles.fetch(this.role_id, {force: true});
 
